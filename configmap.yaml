@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cowrie-config
+  namespace: honeypot
+data:
+  cowrie.cfg: |
+    [honeypot]
+    hostname = srv01
+    ssh_port = 2222
+    listen_endpoints = tcp:2222:interface=0.0.0.0
+    
+    [shell]
+    hostname = srv01
+    
+    [output_jsonlog]
+    enabled = true
+    logfile = var/log/cowrie/cowrie.json

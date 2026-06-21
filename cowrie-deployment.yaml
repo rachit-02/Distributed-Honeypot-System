@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cowrie-honeypot
+  namespace: honeypot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cowrie
+  template:
+    metadata:
+      labels:
+        app: cowrie
+    spec:
+      containers:
+        - name: cowrie
+          image: cowrie/cowrie:v2.5.0    # ✅ pin stable version, avoid latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 2222
+              name: ssh

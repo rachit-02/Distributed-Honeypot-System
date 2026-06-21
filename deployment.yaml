@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cowrie-honeypot
+  namespace: honeypot
+  labels:
+    app: cowrie
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cowrie
+  template:
+    metadata:
+      labels:
+        app: cowrie
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - cowrie
+              topologyKey: kubernetes.io/hostname
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: cowrie
+        image: cowrie-honeypot:v1.0.0
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+              - ALL
+        ports:
+        - containerPort: 2222
+          name: ssh
+        - containerPort: 5000
+          name: api
+        volumeMounts:
+        - name: cowrie-cfg
+          mountPath: /home/cowrie/cowrie-app/etc/cowrie.cfg
+          subPath: cowrie.cfg
+        - name: data-volume
+          mountPath: /home/cowrie/cowrie-app/var/log/cowrie
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          tcpSocket:
+            port: 2222
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          tcpSocket:
+            port: 2222
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: cowrie-cfg
+        configMap:
+          name: cowrie-config
+      - name: data-volume
+        emptyDir: {}

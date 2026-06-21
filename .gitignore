@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+cowrie-env/
+
+# Logs
+logs/
+*.log
+
+# Kubernetes secrets
+*.secret.yaml
+secrets/
+
+# Environment variables
+.env
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Minikube
+minikube-linux-amd64
+
+# Build artifacts
+dist/
+build/
+
+# Node modules (if dashboard uses Node.js)
+node_modules/
+
+# Terraform state
+*.tfstate
+*.tfstate.backup

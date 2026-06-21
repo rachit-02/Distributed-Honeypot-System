@@ -1,0 +1,46 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive COWRIE_HOME=/cowrie
+
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 python3-pip openssh-client netcat-openbsd && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Cowrie from PyPI
+RUN pip3 install --no-cache-dir cowrie
+
+# Create cowrie directory and config
+RUN mkdir -p /cowrie/etc /cowrie/var/log/cowrie /cowrie/var/lib/cowrie
+
+# Generate SSH keys
+RUN ssh-keygen -t rsa -b 2048 -f /cowrie/etc/ssh_host_rsa_key -N '' -q 2>/dev/null || true && \
+    ssh-keygen -t dsa -b 1024 -f /cowrie/etc/ssh_host_dss_key -N '' -q 2>/dev/null || true
+
+# Create minimal config file
+RUN cat > /cowrie/etc/cowrie.cfg << 'EOF'
+[honeypot]
+hostname = honeypot
+listen_port = 2222
+backend = twisted
+
+[ssh]
+rsa_public_key_file = /cowrie/etc/ssh_host_rsa_key.pub
+rsa_private_key_file = /cowrie/etc/ssh_host_rsa_key
+dss_public_key_file = /cowrie/etc/ssh_host_dss_key.pub
+dss_private_key_file = /cowrie/etc/ssh_host_dss_key
+
+[output_file]
+logfile = /cowrie/var/log/cowrie/cowrie.log
+
+[output_json]
+logfile = /cowrie/var/log/cowrie/cowrie.json
+EOF
+
+WORKDIR /cowrie
+EXPOSE 2222
+
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=3 \
+    CMD nc -z localhost 2222 || exit 1
+
+CMD ["cowrie", "start", "-n"]

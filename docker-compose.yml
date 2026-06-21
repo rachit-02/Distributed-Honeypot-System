@@ -1,0 +1,86 @@
+services:
+  cowrie-1:
+    image: cowrie-honeypot:latest
+    container_name: honeypot-1
+    ports:
+      - "2222:2222"
+    volumes:
+      - ./logs/logs1:/cowrie/cowrie-git/var/log/cowrie
+    restart: unless-stopped
+    environment:
+      - COWRIE_LOG_PATH=/cowrie/cowrie-git/var/log/cowrie
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/2222"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    networks:
+      - honeypot-net
+
+  cowrie-2:
+    image: cowrie-honeypot:latest
+    container_name: honeypot-2
+    ports:
+      - "2223:2222"
+    volumes:
+      - ./logs/logs2:/cowrie/cowrie-git/var/log/cowrie
+    restart: unless-stopped
+    environment:
+      - COWRIE_LOG_PATH=/cowrie/cowrie-git/var/log/cowrie
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/2222"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    networks:
+      - honeypot-net
+
+  cowrie-3:
+    image: cowrie-honeypot:latest
+    container_name: honeypot-3
+    ports:
+      - "2224:2222"
+    volumes:
+      - ./logs/logs3:/cowrie/cowrie-git/var/log/cowrie
+    restart: unless-stopped
+    environment:
+      - COWRIE_LOG_PATH=/cowrie/cowrie-git/var/log/cowrie
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/2222"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    networks:
+      - honeypot-net
+
+networks:
+  honeypot-net:
+    driver: bridge
+    
