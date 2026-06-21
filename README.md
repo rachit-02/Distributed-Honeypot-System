@@ -225,18 +225,7 @@ kubectl autoscale deployment cowrie-honeypot --min=3 --max=20 --cpu-percent=80
 
 ---
 
-## 📄 License
-
-This project is licensed under the **MIT License**.
-Cowrie is licensed under **GPL v2** — see [cowrie/LICENSE.rst](cowrie/LICENSE.rst).
-
----
-
 ## 🙏 Acknowledgments
 
 - [Cowrie](https://github.com/cowrie/cowrie) — The SSH honeypot engine powering this system
 - [Kubernetes](https://kubernetes.io/) & [Docker](https://www.docker.com/) — Orchestration and containerization
-
----
-
-*Built by [Rachit Rachit](https://github.com/yourusername) · Contributions welcome via pull request*
